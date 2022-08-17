@@ -7,15 +7,15 @@ import { Challenge } from '../models/challenge.model';
 import { CreateChallengeInput } from '../dtos/inputs/create-challenge.input';
 import { UpdateChallengeInput } from '../dtos/inputs/update-challenge.input';
 import { FetchChallengesArgs } from '../dtos/args/fetch-challenges.args';
-import { ReturnChallenge } from '../dtos/returns/return-all-challenges';
+import { ReturnChallenges } from '../dtos/returns/return-all-challenges';
 
-@Resolver()
+@Resolver(() => Challenge)
 export class ChallengesResolver {
   constructor(private challengesService: ChallengesService) {}
 
-  @Query(() => ReturnChallenge, { name: 'challenges' })
+  @Query(() => ReturnChallenges, { name: 'challenges' })
   findAll(@Args() { skip, take, query }: FetchChallengesArgs) {
-    return this.challengesService.findAllChallenges({ skip, take, query });
+    return this.challengesService.find({ skip, take, query });
   }
 
   @Mutation(() => Challenge)

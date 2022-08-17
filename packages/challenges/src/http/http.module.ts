@@ -8,6 +8,9 @@ import { DatabaseModule } from '../database/database.module';
 import { ChallengesResolver } from './graphql/resolvers/challenges.resolver';
 import { ChallengesService } from '../services/challenges.service';
 
+import { AnswersResolver } from './graphql/resolvers/answers.resolver';
+import { AnswersService } from '../services/answers.service';
+
 @Module({
   imports: [
     DatabaseModule,
@@ -16,6 +19,11 @@ import { ChallengesService } from '../services/challenges.service';
       autoSchemaFile: path.resolve(process.cwd(), 'src/schema.gql'),
     }),
   ],
-  providers: [ChallengesResolver, ChallengesService],
+  providers: [
+    ChallengesResolver,
+    ChallengesService,
+    AnswersResolver,
+    AnswersService,
+  ],
 })
 export class HttpModule {}

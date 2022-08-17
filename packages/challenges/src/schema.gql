@@ -15,7 +15,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type ReturnChallenge {
+type ReturnChallenges {
   page: Float!
   results_per_page: Float!
   results_size: Float!
@@ -26,8 +26,34 @@ type ReturnChallenge {
   results: [Challenge!]!
 }
 
+type Answer {
+  id: ID!
+  status: AnswerStatus!
+  created_at: DateTime!
+  challenge: Challenge!
+}
+
+"""Available answer statuses"""
+enum AnswerStatus {
+  PENDING
+  DONE
+  ERROR
+}
+
+type ReturnAnswers {
+  page: Float!
+  results_per_page: Float!
+  results_size: Float!
+  total_results_size: Float!
+  total_pages: Float!
+  next_page: Float
+  prev_page: Float
+  results: [Answer!]!
+}
+
 type Query {
-  challenges(skip: Int = 0, take: Int = 25, query: String): ReturnChallenge!
+  challenges(skip: Int = 0, take: Int = 25, query: String): ReturnChallenges!
+  answers(skip: Int = 0, take: Int = 25, query: String): ReturnAnswers!
 }
 
 type Mutation {

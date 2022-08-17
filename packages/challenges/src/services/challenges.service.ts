@@ -11,7 +11,7 @@ import { FetchChallengesArgs } from '../http/graphql/dtos/args/fetch-challenges.
 export class ChallengesService {
   constructor(private prisma: PrismaService) {}
 
-  async findAllChallenges({ skip, take, query }: FetchChallengesArgs) {
+  async find({ skip, take, query }: FetchChallengesArgs) {
     const where = query
       ? {
           title: {
@@ -33,9 +33,10 @@ export class ChallengesService {
       where,
     });
 
+    // Corrigir nextPage
     const page = Math.ceil(skip / take + 1);
     const totalPages = Math.ceil(count / take);
-    const nextPage = page === totalPages ? null : page + 1;
+    const nextPage = page === totalPages || totalPages === 0 ? null : page + 1;
     const prevPage = page <= 1 ? null : page - 1;
 
     return {
@@ -48,6 +49,12 @@ export class ChallengesService {
       prev_page: prevPage,
       results: challenges,
     };
+  }
+
+  findById(id: string) {
+    return this.prisma.challenge.findUnique({
+      where: { id },
+    });
   }
 
   async create({ title, description }: CreateChallengeInput) {

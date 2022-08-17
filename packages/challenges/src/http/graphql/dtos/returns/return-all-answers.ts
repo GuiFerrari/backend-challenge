@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { Challenge } from '../../models/challenge.model';
+import { Answer } from '../../models/answer.model';
 
 @ObjectType()
-export class ReturnChallenges {
+export class ReturnAnswers {
   @Field()
   page: number;
 
@@ -25,6 +25,6 @@ export class ReturnChallenges {
   @Field({ nullable: true })
   prev_page?: number;
 
-  @Field(() => [Challenge])
-  results: Challenge[];
+  @Field(() => [Answer])
+  results: Answer[];
 }
