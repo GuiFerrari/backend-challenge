@@ -1,0 +1,48 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Challenge {
+  id: ID!
+  title: String!
+  description: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type ReturnChallenge {
+  page: Float!
+  results_per_page: Float!
+  results_size: Float!
+  total_results_size: Float!
+  total_pages: Float!
+  next_page: Float
+  prev_page: Float
+  results: [Challenge!]!
+}
+
+type Query {
+  challenges(skip: Int = 0, take: Int = 25, query: String): ReturnChallenge!
+}
+
+type Mutation {
+  createChallenge(createChallengeInput: CreateChallengeInput!): Challenge!
+  updateChallenge(updateChallengeInput: UpdateChallengeInput!): Challenge!
+  removeChallenge(id: String!): Challenge!
+}
+
+input CreateChallengeInput {
+  title: String!
+  description: String!
+}
+
+input UpdateChallengeInput {
+  title: String
+  description: String
+  id: String!
+}

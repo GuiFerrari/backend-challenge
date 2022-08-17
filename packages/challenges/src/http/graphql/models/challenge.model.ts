@@ -1,8 +1,8 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class Challenge {
-  @Field()
+  @Field(() => ID)
   id: string;
 
   @Field()
@@ -13,4 +13,7 @@ export class Challenge {
 
   @Field()
   created_at: Date;
+
+  @Field()
+  updated_at: Date;
 }

@@ -60,7 +60,7 @@ Neste projeto, está incluído o **[corrections](packages/corrections) (serviço
 - [✔] Editar
 - [✔] Listar
   - [✔] Paginação
-  - [ ] Busca por título e descrição
+  - [✔] Busca por título e descrição
 
 ### 📓 Submissão
 

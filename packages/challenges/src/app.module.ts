@@ -1,16 +1,10 @@
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ChallengesModule } from './challenges/challenges.module';
+
+import { DatabaseModule } from './database/database.module';
+import { HttpModule } from './http/http.module';
 
 @Module({
-  imports: [
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: true,
-    }),
-    ChallengesModule,
-  ],
+  imports: [DatabaseModule, HttpModule],
   controllers: [],
   providers: [],
 })

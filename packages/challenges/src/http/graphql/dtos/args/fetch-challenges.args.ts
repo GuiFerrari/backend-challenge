@@ -11,4 +11,7 @@ export class FetchChallengesArgs {
   @Min(1)
   @Max(50)
   take = 25;
+
+  @Field({ nullable: true })
+  query: string;
 }
