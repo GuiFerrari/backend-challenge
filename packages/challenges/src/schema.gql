@@ -28,7 +28,9 @@ type ReturnChallenges {
 
 type Answer {
   id: ID!
+  repository_link: String!
   status: AnswerStatus!
+  grade: Float!
   created_at: DateTime!
   challenge: Challenge!
 }
@@ -53,13 +55,14 @@ type ReturnAnswers {
 
 type Query {
   challenges(skip: Int = 0, take: Int = 25, query: String): ReturnChallenges!
-  answers(skip: Int = 0, take: Int = 25, query: String): ReturnAnswers!
+  answers(skip: Int = 0, take: Int = 25, challenge_title: String, start_date: DateTime, end_date: DateTime, status: AnswerStatus): ReturnAnswers!
 }
 
 type Mutation {
   createChallenge(createChallengeInput: CreateChallengeInput!): Challenge!
   updateChallenge(updateChallengeInput: UpdateChallengeInput!): Challenge!
   removeChallenge(id: String!): Challenge!
+  createAnswer(createAnswerInput: CreateAnswerInput!): Answer!
 }
 
 input CreateChallengeInput {
@@ -71,4 +74,9 @@ input UpdateChallengeInput {
   title: String
   description: String
   id: String!
+}
+
+input CreateAnswerInput {
+  repository_link: String!
+  id_challenge: String!
 }

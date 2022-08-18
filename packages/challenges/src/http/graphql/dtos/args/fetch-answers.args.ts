@@ -1,6 +1,8 @@
 import { Field, Int, ArgsType } from '@nestjs/graphql';
 import { Max, Min } from 'class-validator';
 
+import { AnswerStatus } from '../../models/answer.model';
+
 @ArgsType()
 export class FetchAnswersArgs {
   @Field(() => Int)
@@ -13,5 +15,14 @@ export class FetchAnswersArgs {
   take = 25;
 
   @Field({ nullable: true })
-  query: string;
+  challenge_title: string;
+
+  @Field({ nullable: true })
+  start_date: Date;
+
+  @Field({ nullable: true })
+  end_date: Date;
+
+  @Field(() => AnswerStatus, { nullable: true })
+  status: AnswerStatus;
 }

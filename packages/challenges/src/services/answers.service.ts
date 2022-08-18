@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../database/prisma/prisma.service';
+import { KafkaService } from '../messaging/kafka.service';
 
 import { CreateAnswerInput } from '../http/graphql/dtos/inputs/create-answer.input';
 
@@ -8,31 +9,60 @@ import { FetchAnswersArgs } from '../http/graphql/dtos/args/fetch-answers.args';
 
 @Injectable()
 export class AnswersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private kafka: KafkaService) {}
 
-  async find({ skip, take, query }: FetchAnswersArgs) {
-    const where = query
-      ? {
+  async find({
+    skip,
+    take,
+    challenge_title,
+    start_date,
+    end_date,
+    status,
+  }: FetchAnswersArgs) {
+    const where = {};
+    const createdAt = {};
+
+    if (challenge_title) {
+      Object.assign(where, {
+        challenge: {
           title: {
-            search: query,
+            search: challenge_title,
           },
-          description: {
-            search: query,
-          },
-        }
-      : {};
+        },
+      });
+    }
+
+    if (status) {
+      Object.assign(where, {
+        status: status,
+      });
+    }
+
+    if (start_date) {
+      Object.assign(createdAt, {
+        lte: start_date,
+      });
+    }
+
+    if (end_date) {
+      Object.assign(createdAt, {
+        gte: end_date,
+      });
+    }
+
+    Object.assign(where);
 
     const answers = await this.prisma.answers.findMany({
       skip,
       take,
-      // where,
+      where,
       orderBy: {
         created_at: 'desc',
       },
     });
 
     const count = await this.prisma.answers.count({
-      // where,
+      where,
     });
 
     const page = Math.ceil(skip / take + 1);
@@ -52,13 +82,29 @@ export class AnswersService {
     };
   }
 
-  // async create({ title, description }: CreateAnswerInput) {
-  //   return this.prisma.answers.create({
-  //     data: {
-  //       grade: 1,
-  //       // title,
-  //       // description,
-  //     },
-  //   });
-  // }
+  async create({ repository_link, id_challenge }: CreateAnswerInput) {
+    const challenge = await this.prisma.challenge.findUnique({
+      where: {
+        id: id_challenge,
+      },
+    });
+
+    if (!challenge) {
+      throw new Error('Challenge not found.');
+    }
+
+    const answer = await this.prisma.answers.create({
+      data: {
+        repository_link,
+        id_challenge,
+      },
+    });
+
+    this.kafka.emit('challenge.correction', {
+      submissionId: answer.id,
+      repositoryUrl: answer.repository_link,
+    });
+
+    return answer;
+  }
 }

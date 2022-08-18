@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Challenge } from './challenge.model';
 
-enum AnswerStatus {
+export enum AnswerStatus {
   PENDING = 'PENDING',
   DONE = 'DONE',
   ERROR = 'ERROR',
@@ -17,8 +17,14 @@ export class Answer {
   @Field(() => ID)
   id: string;
 
+  @Field()
+  repository_link: string;
+
   @Field(() => AnswerStatus)
   status: AnswerStatus;
+
+  @Field()
+  grade: number;
 
   @Field()
   created_at: Date;

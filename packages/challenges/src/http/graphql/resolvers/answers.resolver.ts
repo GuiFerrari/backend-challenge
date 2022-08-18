@@ -1,4 +1,11 @@
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 
 import { AnswersService } from '../../../services/answers.service';
 import { ChallengesService } from '../../../services/challenges.service';
@@ -8,6 +15,7 @@ import { Challenge } from '../models/challenge.model';
 
 import { FetchAnswersArgs } from '../dtos/args/fetch-answers.args';
 import { ReturnAnswers } from '../dtos/returns/return-all-answers';
+import { CreateAnswerInput } from '../dtos/inputs/create-answer.input';
 
 @Resolver(() => Answer)
 export class AnswersResolver {
@@ -17,8 +25,25 @@ export class AnswersResolver {
   ) {}
 
   @Query(() => ReturnAnswers, { name: 'answers' })
-  findAll(@Args() { skip, take, query }: FetchAnswersArgs) {
-    return this.answersService.find({ skip, take, query });
+  findAll(
+    @Args()
+    {
+      skip,
+      take,
+      challenge_title,
+      start_date,
+      end_date,
+      status,
+    }: FetchAnswersArgs,
+  ) {
+    return this.answersService.find({
+      skip,
+      take,
+      challenge_title,
+      start_date,
+      end_date,
+      status,
+    });
   }
 
   @ResolveField(() => Challenge)
@@ -26,10 +51,10 @@ export class AnswersResolver {
     return this.challengeService.findById(answer.id_challenge);
   }
 
-  // @Mutation(() => Challenge)
-  // createChallenge(
-  //   @Args('createChallengeInput') createChallengeInput: CreateChallengeInput,
-  // ) {
-  //   return this.answersService.create(createChallengeInput);
-  // }
+  @Mutation(() => Answer)
+  createAnswer(
+    @Args('createAnswerInput') createAnswerInput: CreateAnswerInput,
+  ) {
+    return this.answersService.create(createAnswerInput);
+  }
 }
