@@ -18,6 +18,6 @@ async function bootstrap() {
     },
   );
 
-  app.listen(() => console.log('Kafka consumer service is listening!'));
+  app.listen(() => console.log('[Correction] Microservice running!'));
 }
 bootstrap();

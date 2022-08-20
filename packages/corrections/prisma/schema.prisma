@@ -1,0 +1,43 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AnswersStatus {
+  PENDING
+  DONE
+  ERROR
+}
+
+model Challenge {
+  id          String @id @default(uuid())
+  title       String
+  description String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  Answers Answers[]
+
+  @@map("challenges")
+}
+
+model Answers {
+  id              String        @id @default(uuid())
+  repository_link String
+  status          AnswersStatus @default(PENDING)
+  grade           Int           @default(0)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  id_challenge String
+  challenge    Challenge @relation(fields: [id_challenge], references: [id])
+
+  @@map("answers")
+}

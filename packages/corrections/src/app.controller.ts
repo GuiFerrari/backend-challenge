@@ -1,6 +1,8 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 
+import { PrismaService } from './database/prisma/prisma.service';
+
 interface CorrectLessonMessage {
   value: {
     submissionId: string;
@@ -8,26 +10,47 @@ interface CorrectLessonMessage {
   };
 }
 
+enum AnswerStatus {
+  PENDING = 'PENDING',
+  DONE = 'DONE',
+  ERROR = 'ERROR',
+}
+
 interface CorrectLessonResponse {
   submissionId: string;
   repositoryUrl: string;
   grade: number;
-  status: 'Pending' | 'Error' | 'Done';
+  status: AnswerStatus;
 }
 
 @Controller()
 export class AppController {
+  constructor(private prisma: PrismaService) {}
+
   @MessagePattern('challenge.correction')
-  correctLesson(
+  async correctLesson(
     @Payload() message: CorrectLessonMessage,
-  ): CorrectLessonResponse {
+  ): Promise<CorrectLessonResponse> {
+    console.log('message.value: ', message.value);
     const { submissionId, repositoryUrl } = message.value;
 
-    return {
+    const response: CorrectLessonResponse = {
       submissionId,
       repositoryUrl,
       grade: Math.floor(Math.random() * 10) + 1,
-      status: 'Done',
+      status: AnswerStatus.DONE,
     };
+
+    await this.prisma.answers.update({
+      where: {
+        id: submissionId,
+      },
+      data: {
+        grade: response.grade,
+        status: AnswerStatus.DONE,
+      },
+    });
+
+    return response;
   }
 }

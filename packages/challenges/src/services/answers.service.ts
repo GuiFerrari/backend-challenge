@@ -4,8 +4,10 @@ import { PrismaService } from '../database/prisma/prisma.service';
 import { KafkaService } from '../messaging/kafka.service';
 
 import { CreateAnswerInput } from '../http/graphql/dtos/inputs/create-answer.input';
-
 import { FetchAnswersArgs } from '../http/graphql/dtos/args/fetch-answers.args';
+import { AnswerStatus } from '../http/graphql/models/answer.model';
+
+import { isValidURL } from '../util/isValidURL';
 
 @Injectable()
 export class AnswersService {
@@ -99,6 +101,21 @@ export class AnswersService {
         id_challenge,
       },
     });
+
+    const verifyUrl = isValidURL(repository_link);
+
+    if (!verifyUrl) {
+      await this.prisma.answers.update({
+        where: {
+          id: answer.id,
+        },
+        data: {
+          status: AnswerStatus.ERROR,
+        },
+      });
+
+      throw new Error('Repository URL is not a valid link.');
+    }
 
     this.kafka.emit('challenge.correction', {
       submissionId: answer.id,
