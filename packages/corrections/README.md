@@ -22,12 +22,12 @@ interface CorrectLessonResponse {
 ### Executando o app
 
 ```bash
-# development
-$ npm run start
+# Instalar as dependências
+$ yarn install
 
-# watch mode
-$ npm run start:dev
+# Gerar os modelos do banco de dados
+$ yarn prisma generate
 
-# production mode
-$ npm run start:prod
+# Executar a aplicação
+$ yarn start:dev
 ```
